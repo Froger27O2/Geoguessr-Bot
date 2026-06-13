@@ -1,0 +1,24 @@
+{
+  "name": "geoguessr-grind",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+  "start": "npx tsx source/index.ts"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grammyjs/storage-supabase": "^2.5.0",
+    "@sinclair/typebox": "^0.34.49",
+    "@supabase/supabase-js": "^2.108.1",
+    "dotenv": "^17.4.2",
+    "grammy": "^1.43.0",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2"
+  }
+}
