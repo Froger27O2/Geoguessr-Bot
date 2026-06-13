@@ -102,7 +102,6 @@ bot.command("leaderboard", async (ctx) => {
 
     scores[s.user_id].total += 1;
     
-    // 2 points for perfect, 1 point for partial
     if (s.status === "CORRECT") {
       scores[s.user_id].score += 2;
     } else if (s.status === "PARTIALLY_CORRECT") {
@@ -116,7 +115,8 @@ bot.command("leaderboard", async (ctx) => {
 
   if (sortedLeaderboard.length === 0) return ctx.reply("No one has played yet! Be the first to get on the board.");
 
-  let lbMessage = "🏆 **GLOBAL LEADERBOARD (TOP 10)** 🏆\n━━━━━━━━━━━━━━━━━━\n\n";
+  // Switched formatting to HTML tags (<b> for bold, <i> for italics)
+  let lbMessage = "🏆 <b>GLOBAL LEADERBOARD (TOP 10)</b> 🏆\n━━━━━━━━━━━━━━━━━━\n\n";
   
   sortedLeaderboard.forEach((player, index) => {
     let medal = `${index + 1}.`;
@@ -124,18 +124,19 @@ bot.command("leaderboard", async (ctx) => {
     if (index === 1) medal = "🥈";
     if (index === 2) medal = "🥉";
 
-    lbMessage += `${medal} **${player.username}**\n↳ ${player.score} points (${player.total} guesses)\n\n`;
+    // This strips out any < or > symbols from weird usernames so it doesn't break the HTML
+    const safeName = player.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    lbMessage += `${medal} <b>${safeName}</b>\n↳ ${player.score} points (${player.total} guesses)\n\n`;
   });
 
   lbMessage += "━━━━━━━━━━━━━━━━━━\n";
-  lbMessage += "_ℹ️ Scoring: 2 pts (Correct), 1 pt (Partially Correct)_";
+  lbMessage += "<i>ℹ️ Scoring: 2 pts (Correct), 1 pt (Partially Correct)</i>";
 
-  await ctx.reply(lbMessage, { parse_mode: "Markdown" });
+  // Tell Telegram to use the HTML parser instead of Markdown
+  await ctx.reply(lbMessage, { parse_mode: "HTML" });
 });
 
-// ---------------------------------------------------------------------------
-// CALLBACK QUERIES
-// ---------------------------------------------------------------------------
 bot.callbackQuery("show_maps", async (ctx) => {
   await ctx.answerCallbackQuery().catch(() => {});
   await ctx.editMessageReplyMarkup({ reply_markup: undefined }).catch(() => {});
