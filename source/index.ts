@@ -78,7 +78,6 @@ bot.command("stats", async (ctx) => {
   await ctx.reply("Select a map to view your stats:", { reply_markup: keyboard });
 });
 bot.command("geoguessr", async (ctx) => {
-  // Create an inline button that acts as a web link
   const keyboard = new InlineKeyboard()
     .url("🌍 Play GeoGuessr", "https://www.geoguessr.com/");
 
@@ -87,7 +86,9 @@ bot.command("geoguessr", async (ctx) => {
   });
 });
 bot.command("leaderboard", async (ctx) => {
-  const { data: stats, error } = await supabase.from("user_stats").select("user_id, username, status");
+  const { data: stats, error } = await supabase.from("user_stats")
+    .select("user_id, username, status")
+    .order("created_at", { ascending: false });
   
   if (error || !stats) return ctx.reply("Error fetching leaderboard data.");
 
@@ -96,9 +97,9 @@ bot.command("leaderboard", async (ctx) => {
   stats.forEach(s => {
     if (!scores[s.user_id]) {
       scores[s.user_id] = { username: s.username || "Anonymous Player", score: 0, total: 0 };
-    } else if (s.username && scores[s.user_id].username === "Anonymous Player") {
-      scores[s.user_id].username = s.username;
     }
+    
+    // (Notice we removed the old "else if" block here so old names don't overwrite new ones)
 
     scores[s.user_id].total += 1;
     
@@ -115,7 +116,6 @@ bot.command("leaderboard", async (ctx) => {
 
   if (sortedLeaderboard.length === 0) return ctx.reply("No one has played yet! Be the first to get on the board.");
 
-  // Switched formatting to HTML tags (<b> for bold, <i> for italics)
   let lbMessage = "🏆 <b>GLOBAL LEADERBOARD (TOP 10)</b> 🏆\n━━━━━━━━━━━━━━━━━━\n\n";
   
   sortedLeaderboard.forEach((player, index) => {
@@ -124,7 +124,6 @@ bot.command("leaderboard", async (ctx) => {
     if (index === 1) medal = "🥈";
     if (index === 2) medal = "🥉";
 
-    // This strips out any < or > symbols from weird usernames so it doesn't break the HTML
     const safeName = player.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
     lbMessage += `${medal} <b>${safeName}</b>\n↳ ${player.score} points (${player.total} guesses)\n\n`;
@@ -133,10 +132,8 @@ bot.command("leaderboard", async (ctx) => {
   lbMessage += "━━━━━━━━━━━━━━━━━━\n";
   lbMessage += "<i>ℹ️ Scoring: 2 pts (Correct), 1 pt (Partially Correct)</i>";
 
-  // Tell Telegram to use the HTML parser instead of Markdown
   await ctx.reply(lbMessage, { parse_mode: "HTML" });
 });
-
 bot.callbackQuery("show_maps", async (ctx) => {
   await ctx.answerCallbackQuery().catch(() => {});
   await ctx.editMessageReplyMarkup({ reply_markup: undefined }).catch(() => {});
