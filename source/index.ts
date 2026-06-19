@@ -1,18 +1,12 @@
 import { Bot, InlineKeyboard, session } from "grammy";
 import { supabaseAdapter } from "@grammyjs/storage-supabase";
 import * as dotenv from "dotenv";
-
-import { supabase } from "./database.ts"; // Adjust path if needed
+import { supabase } from "./database.ts"; 
 import { MyContext, GameSession } from "./types.ts";
 import { pullNextClue, evaluateGuessWithGemini, sendSafePhoto } from "./services.ts";
 
 dotenv.config();
-
 const bot = new Bot<MyContext>(process.env.TELEGRAM_BOT_TOKEN!);
-
-// ---------------------------------------------------------------------------
-// PERMANENT SESSION STORAGE
-// ---------------------------------------------------------------------------
 const storage = supabaseAdapter({
   supabase,
   table: 'sessions', 
@@ -31,9 +25,6 @@ bot.use(session({
   storage, 
 }));
 
-// ---------------------------------------------------------------------------
-// COMMANDS
-// ---------------------------------------------------------------------------
 bot.command("start", async (ctx) => {
   await ctx.reply("Welcome to the GeoGuessr Meta Trainer.\n\nTap the button below or type /maps to choose a map and begin.", {
     reply_markup: new InlineKeyboard().text("View Maps", "show_maps")
@@ -53,7 +44,6 @@ async function showMapsMenu(ctx: MyContext) {
 }
 
 bot.command("maps", showMapsMenu);
-
 bot.command("mode", async (ctx) => {
   if (!ctx.session.activeMapId) {
     return ctx.reply("You need to select a map first! Type /maps to begin.");
@@ -98,8 +88,6 @@ bot.command("leaderboard", async (ctx) => {
     if (!scores[s.user_id]) {
       scores[s.user_id] = { username: s.username || "Anonymous Player", score: 0, total: 0 };
     }
-    
-    // (Notice we removed the old "else if" block here so old names don't overwrite new ones)
 
     scores[s.user_id].total += 1;
     
@@ -273,9 +261,6 @@ bot.callbackQuery("next_clue", async (ctx) => {
   }
 });
 
-// ---------------------------------------------------------------------------
-// MESSAGE HANDLER (GAME LOOP)
-// ---------------------------------------------------------------------------
 bot.on("message:text", async (ctx) => {
   const guess = ctx.message.text;
 

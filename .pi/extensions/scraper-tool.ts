@@ -2,9 +2,8 @@ import { Type } from "@sinclair/typebox";
 import * as fs from "node:fs";
 import * as path from "node:path";
 // @ts-ignore - Suppress ESM relative extension check for local agent runtime compatibility
-import { supabase } from "../services/supabase";
+import { supabase } from "./services/supabase.js";
 
-// 🧼 Reusable text utility to scrub HTML tags and fix unicode strings
 function cleanText(text: string): string {
   let cleaned = text.replace(/\\u003C/g, '<').replace(/\\"/g, '"');
   cleaned = cleaned.replace(/<[^>]+>/g, '');
@@ -17,17 +16,15 @@ export default function (pi: any) {
     name: "get_scraper_instructions",
     description: "Reads the geographic classification rules from the hidden SCRAPER.md specification file so the agent understands how to sort country and region metas.",
     parameters: Type.Object({}),
-    execute: async (_toolCallId: string, _params: any) => {
+   execute: async (_toolCallId: string, _params: any) => {
       try {
-        const pathToRules = new URL("./SCRAPER.md", import.meta.url).pathname;
-        const cleanPath = pathToRules.startsWith('/') && process.platform === 'win32' 
-          ? pathToRules.slice(1) 
-          : pathToRules;
+        const pathToRules = path.join(process.cwd(), ".pi", "extensions", "utilities", "SCRAPER.md");
 
-        if (!fs.existsSync(cleanPath)) {
-          return { content: [{ type: "text", text: "ERROR: SCRAPER.md could not be found." }] };
+        if (!fs.existsSync(pathToRules)) {
+          return { content: [{ type: "text", text: `ERROR: SCRAPER.md could not be found at: ${pathToRules}` }] };
         }
-        const rules = fs.readFileSync(cleanPath, "utf8");
+        
+        const rules = fs.readFileSync(pathToRules, "utf8");
         return { content: [{ type: "text", text: rules }] };
       } catch (err: any) {
         return { content: [{ type: "text", text: `Failed to read rules file: ${err.message}` }] };
