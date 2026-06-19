@@ -7,6 +7,7 @@ The system autonomously scrapes geographic data, manages persistent multiplayer 
 ## ✨ Key Features
 
 * **🤖 AI-Powered Evaluation:** Uses the Google Gemini API as an intelligent judge. It semantically analyzes user guesses, understands geographic context, ignores minor typos, and provides deterministic statuses (CORRECT, PARTIALLY_CORRECT, or INCORRECT) along with detailed explanations.
+* **🧠 Dedicated Study Mode:** An educational environment where the bot retrieves and displays factual meta-data descriptions directly from the database, allowing users to memorize specific geographic cues and map patterns reliably.
 * **🕵️ Autonomous ETL Scraper:** Integrated with a local PI Agent to automatically extract, clean, and load geographic metadata and visual clues from external JavaScript sources directly into Supabase cloud storage.
 * **💾 Persistent Sessions:** Utilizes Supabase (PostgreSQL) to cache active game rounds. Players never lose their progress during server restarts, and concurrent user interactions are handled safely.
 * **🏆 Global Leaderboard & Analytics:** Dynamic scoring system (2 pts for Correct, 1 pt for Partial). Tracks personal win rates (All-Time and Last 100 guesses) and generates a real-time Top 10 global ranking.
@@ -76,10 +77,10 @@ Create a .env file in the root directory and add your keys:
 | :--- | :--- |
 | `/start` | Initialize the bot and select a map |
 | `/maps` | Display available geography maps |
-| `/mode` | Switch between Play and Study modes |
+| `/mode` | Toggle between 'Play' (Competitive) and 'Study' (Educational - displays meta-data from DB) |
 | `/stats` | View personal win-rate analytics |
 | `/leaderboard` | Check the global Top-10 rankings |
-| `/geoguessr` | Link to the official website |
+| `/geoguessr` | Link to the official GeoGuessr website |
 
 ## 👨‍💻 Author
 
