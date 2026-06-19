@@ -85,5 +85,5 @@ Create a .env file in the root directory and add your keys:
 
 **Oleksandr Dychkevych**  
 Software Engineering Student | Lviv Polytechnic National University  
-* 🐙 GitHub: [@Froger2702](https://github.com/Froger2702)
+* 🐙 GitHub: [@Froger2702](https://github.com/Froger27O2)
 * ✈️ Telegram: [@Slaba4_0k](https://t.me/Slaba4_0k)
